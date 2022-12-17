@@ -9,8 +9,8 @@ ipv6ServerAddress
 publicAddress
 UDPListenPort
 ClientAllowedIPs
-几个字段
-publicAddress为必须修改字段
+几个字段,
+其中publicAddress为必须修改字段
 
 ## 启动脚本
 su -

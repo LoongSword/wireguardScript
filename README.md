@@ -15,3 +15,4 @@ ClientAllowedIPs
 ## 启动脚本
 su -
 ./wireguard.sh
+![image](https://github.com/nightAsShadow/wireguardScript/blob/main/img/wireguardscript.png)

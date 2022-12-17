@@ -13,6 +13,9 @@ ClientAllowedIPs
 其中publicAddress为必须修改字段
 
 ## 启动脚本
-su -
-./wireguard.sh
-![image](https://github.com/nightAsShadow/wireguardScript/blob/main/img/wireguardscript.png)
+su - <br>
+./wireguard.sh <br>
+![image](https://github.com/nightAsShadow/wireguardScript/blob/main/img/wireguardscript.png) <br>
+
+# 问题
+使用过程中碰到，问题请联系我，感谢!!!

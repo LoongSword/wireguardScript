@@ -18,4 +18,4 @@ su - <br>
 ![image](https://github.com/nightAsShadow/wireguardScript/blob/main/img/wireguardscript.png) <br>
 
 # 问题
-使用过程中碰到，问题请联系我，感谢!!!
+使用过程中碰到问题请联系我，感谢!!!

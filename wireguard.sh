@@ -137,28 +137,28 @@ wireguard_client_install(){
     case "$COM_OS" in
             ubuntu)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "debian WireGuard is installed"
                 else
-                    apt-get -y install wireguard openresolv
+                    apt-get -y install wireguard openresolv iptables
                     _success_failed $? "install wireguard"
                     _create_folder
                 fi
                 ;;
             debian)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "debian WireGuard is installed"
                 else
-                    apt-get -y install wireguard openresolv
-                    _success_failed $? "install wireguard"
+                    apt-get -y install wireguard openresolv iptables
+                    _success_failed $? "debian install wireguard"
                     _create_folder
                 fi
                 ;;
             arch)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "arch WireGuard is installed"
                 else
-                    pacman  --noconfirm -S wireguard-tools openresolv
-                    _success_failed $? "install wireguard"
+                    pacman  --noconfirm -S wireguard-tools openresolv iptables
+                    _success_failed $? "arch install wireguard"
                     _create_folder
                 fi
                 ;;
@@ -167,14 +167,14 @@ wireguard_client_install(){
                     _error "WireGuard is installed"
                 else
                     if [ $(_os_ver) -eq 7 ]; then
-                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs=kernel-plus --enablerepo=centosplus --save && sed -e 's/^DEFAULTKERNEL=kernel$/DEFAULTKERNEL=kernel-plus/' -i /etc/sysconfig/kernel && yum install -y kernel-plus wireguard-tools
-                        _success_failed $? "install wireguard"
+                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs=kernel-plus --enablerepo=centosplus --save && sed -e 's/^DEFAULTKERNEL=kernel$/DEFAULTKERNEL=kernel-plus/' -i /etc/sysconfig/kernel && yum install -y kernel-plus wireguard-tools iptables
+                        _success_failed $? "centos install wireguard"
                     else
-                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs="kernel-plus, kernel-plus-*" --setopt=centosplus.enabled=1 --save && sed -e 's/^DEFAULTKERNEL=kernel-core$/DEFAULTKERNEL=kernel-plus-core/' -i /etc/sysconfig/kernel&& yum install -y kernel-plus wireguard-tools
+                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs="kernel-plus, kernel-plus-*" --setopt=centosplus.enabled=1 --save && sed -e 's/^DEFAULTKERNEL=kernel-core$/DEFAULTKERNEL=kernel-plus-core/' -i /etc/sysconfig/kernel&& yum install -y kernel-plus wireguard-tools iptables
                         _success_failed $? "install wireguard"
                     fi
                     _warning "you need reboot"
-                    _success_failed $? "install wireguard"
+                    _success_failed $? "centos install wireguard"
                     _create_folder
                 fi
                 ;;
@@ -189,10 +189,10 @@ wireguard_server_install() {
     case "$COM_OS" in
             ubuntu)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "ubuntu WireGuard is installed"
                 else
-                    apt-get -y install wireguard openresolv
-                    _success_failed $? "install wireguard"
+                    apt-get -y install wireguard openresolv qrencode iptables
+                    _success_failed $? "ubuntu install wireguard"
                     _ipForward_server
                     _create_folder
                     _create_server_profile
@@ -201,10 +201,10 @@ wireguard_server_install() {
                 ;;
             debian)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "debian WireGuard is installed"
                 else
-                    apt-get -y install wireguard openresolv
-                    _success_failed $? "install wireguard"
+                    apt-get -y install wireguard openresolv qrencode iptables
+                    _success_failed $? "debian install wireguard"
                     _ipForward_server
                     _create_folder
                     _create_server_profile
@@ -213,10 +213,10 @@ wireguard_server_install() {
                 ;;
             arch)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "arch WireGuard is installed"
                 else
-                    pacman  --noconfirm -S wireguard-tools openresolv
-                    _success_failed $? "install wireguard"
+                    pacman  --noconfirm -S wireguard-tools openresolv qrencode iptables
+                    _success_failed $? "arch install wireguard"
                     _ipForward_server
                     _create_folder
                     _create_server_profile
@@ -225,17 +225,17 @@ wireguard_server_install() {
                 ;;
             centos)
                 if _exists "wg" && _exists "wg-quick"; then
-                    _error "WireGuard is installed"
+                    _error "centos WireGuard is installed"
                 else
                     if [ $(_os_ver) -eq 7 ]; then
-                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs=kernel-plus --enablerepo=centosplus --save && sed -e 's/^DEFAULTKERNEL=kernel$/DEFAULTKERNEL=kernel-plus/' -i /etc/sysconfig/kernel && yum install -y kernel-plus wireguard-tools
+                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs=kernel-plus --enablerepo=centosplus --save && sed -e 's/^DEFAULTKERNEL=kernel$/DEFAULTKERNEL=kernel-plus/' -i /etc/sysconfig/kernel && yum install -y kernel-plus wireguard-tools openresolv iptables
                         _success_failed $? "install wireguard"
                     else
-                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs="kernel-plus, kernel-plus-*" --setopt=centosplus.enabled=1 --save && sed -e 's/^DEFAULTKERNEL=kernel-core$/DEFAULTKERNEL=kernel-plus-core/' -i /etc/sysconfig/kernel&& yum install -y kernel-plus wireguard-tools
+                        yum install -y yum-utils epel-release && yum-config-manager --setopt=centosplus.includepkgs="kernel-plus, kernel-plus-*" --setopt=centosplus.enabled=1 --save && sed -e 's/^DEFAULTKERNEL=kernel-core$/DEFAULTKERNEL=kernel-plus-core/' -i /etc/sysconfig/kernel&& yum install -y kernel-plus wireguard-tools openresolv iptables
                         _success_failed $? "install wireguard"
                     fi
                     _warning "you need reboot"
-                    _success_failed $? "install wireguard"
+                    _success_failed $? "centos install wireguard"
                     _ipForward_server
                     _create_folder
                     _create_server_profile
@@ -264,6 +264,7 @@ _ipForward_server(){
     else
         _info "ipv6 forwad is Already exists"
     fi
+    sysctl -p
 }
 _create_folder(){
     if [ ! -d "/etc/wireguard/" ];then
@@ -289,15 +290,15 @@ _create_server_profile(){
         count=$(expr ${count} + 1)
     done
     _yellow_println "network card number :$networkCardsId"
-    read -p "Please enter the network card number :" networkCard
-    _info "Selected network card :"${networkCards[$networkCard]}
+    read -p "Please enter the network card number :  " networkCard
+    _info "Selected network card :   "${networkCards[$networkCard]}
     echo "
     [Interface]
-    PrivateKey = $(cat server_privatekey) # 填写本机的privatekey内容
-    Address = $ipv4ServerAddress/24,$ipv4ServerAddress/32
+    PrivateKey = $(cat server_privatekey)
+    Address = $ipv4ServerAddress/24,$ipv6ServerAddress/32
     PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
     PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
-    ListenPort = $UDPListenPort # 注意该端口是UDP端口
+    ListenPort = $UDPListenPort
     MTU = 1420 " | tee  $(cat /etc/hostname)wg.conf >/dev/null
     _success_failed $? "create wireguard configuration file $(cat /etc/hostname)wg.conf"
 }
@@ -340,35 +341,35 @@ wireguard_uninstall(){
     case "$COM_OS" in
         ubuntu)
             if _exists "wg" && _exists "wg-quick"; then
-                apt-get remove -y wireguard
-                _success_failed $? "wireguard uninstall"
+                apt-get remove -y wireguard-tools
+                _success_failed $? "ubuntu wireguard uninstall"
             else
-                _error "WireGuard is uninstalled"
+                _error "ubuntu WireGuard is uninstalled"
             fi
             ;;
         debian)
             if _exists "wg" && _exists "wg-quick"; then
-                apt-get remove -y wireguard
-                _success_failed $? "wireguard uninstall"
+                apt-get remove -y wireguard-tools
+                _success_failed $? "debian wireguard uninstall"
             else
-                _error "WireGuard is uninstalled"
+                _error "debian WireGuard is uninstalled"
             fi
             ;;
         arch)
             if _exists "wg" && _exists "wg-quick"; then
                 pacman --noconfirm -Rs wireguard-tools
-                _success_failed $? "wireguard uninstall"
+                _success_failed $? "arch wireguard uninstall"
             else
-                _error "WireGuard is uninstalled"
+                _error "arch WireGuard is uninstalled"
             fi
             ;;
         centos)
             _info "start install wireguard"
             if _exists "wg" && _exists "wg-quick"; then
                 yum remove -y wireguard-tools
-                _success_failed $? "wireguard uninstall"
+                _success_failed $? "centos wireguard uninstall"
             else
-                _error "WireGuard is uninstalled"
+                _error "centos WireGuard is uninstalled"
             fi
             ;;
         *)
@@ -395,23 +396,23 @@ wireguard_client_config_file(){
     _success_failed $? "client $clien_privatekey and $clien_publickey create"
     _warning "Please save client $clientName PublicKey and PrivateKey"
     echo "
-        [Interface]
-        PrivateKey = $(cat $clien_privatekey)  # 填写本机的privatekey 内容
-        Address = $ipv4Address/24,$ipv6Address/32
-        MTU = 1420
+    [Interface]
+    PrivateKey = $(cat $clien_privatekey)
+    Address = $ipv4Address/24,$ipv6Address/32
+    MTU = 1420
 
-        [Peer]
-        PublicKey = $(cat server_publickey)  # 填写对端的publickey 内容
-        Endpoint = $publicAddress:$UDPListenPort
-        AllowedIPs = $ClientAllowedIPs
-        PersistentKeepalive = 25 " | tee  $clientName.conf >/dev/null
-    _success_failed $? "create wireguard client configuration file $clientName.conf"
+    [Peer]
+    PublicKey = $(cat server_publickey)
+    Endpoint = $publicAddress:$UDPListenPort
+    AllowedIPs = $ClientAllowedIPs
+    PersistentKeepalive = 25 " | tee  $clientName"wg".conf >/dev/null
+    _success_failed $? "create wireguard client configuration file $clientName"wg".conf"
 
      echo "
-        # 客户端$clientName
-        [Peer]
-        PublicKey =  $(cat $clien_publickey)  # 填写对端的publickey 内容
-        AllowedIPs = $ipv4Address/24,$ipv6Address/32" | tee -a $(cat /etc/hostname)wg.conf >/dev/null
+     # 客户端$clientName
+     [Peer]
+     PublicKey =  $(cat $clien_publickey)
+     AllowedIPs = $ipv4Address,$ipv6Address" | tee -a $(cat /etc/hostname)wg.conf >/dev/null
     _success_failed $? "Append wireguard configuration file $(cat /etc/hostname)wg.conf"
 }
 
@@ -494,6 +495,97 @@ wireguard_operation(){
 }
 
 
+wireguard_config_to_QRcode(){
+    echo $(cat $1) | qrencode -o - -t UTF8
+    #       qrencode -t ansiutf8 $(cat /etc/wireguard/$clientName.conf)
+}
+wireguard_config_to_file(){
+    cat $1 | while read line
+    do
+    echo $line
+    done
+}
+
+wireguard_choose_file_or_qr(){
+    _purple_println "----------------------------------------------------"
+    _yellow_println " 1. 文件形式                                         "
+    _purple_println " 2. 二维码形式                                       "
+    _cyan_println   " 0. 返回上一个菜单                                    "
+    _purple_println "----------------------------------------------------"
+
+    echo
+    read -p "请输入数字:" num
+    case "$num" in
+    1)
+        wireguard_config_to_file $1
+        ;;
+    2)
+        wireguard_config_to_QRcode $1
+        ;;
+    0)
+        echo
+        echo
+        wireguard_config_file_display
+    ;;
+    *)
+        _red_println "输入有误，请输入正确的序号！！！"
+        echo
+        echo
+        wireguard_choose_file_or_qr
+    ;;
+    esac
+}
+
+wireguard_config_file_display(){
+    cd /etc/wireguard
+    _purple_println "----------------------------------------------------"
+    _yellow_println " 1. 查看本机配置文件                                  "
+    _purple_println " 2. 查看指定配置文件                                  "
+    _cyan_println   " 0. 返回上一个菜单                                    "
+    _purple_println "----------------------------------------------------"
+
+    echo
+    read -p "请输入数字:" num
+    case "$num" in
+    1)
+        _yellow_println "本机配置文件 $(cat /etc/hostname)wg.conf"
+        if [ -f "$(cat /etc/hostname)wg.conf" ];then
+            wireguard_choose_file_or_qr "$(cat /etc/hostname)wg.conf"
+        else
+            _warning "The Native config is not found"
+            wireguard_config_file_display
+        fi
+        echo
+        echo
+        wireguard_config_file_display
+        ;;
+    2)
+        read -p "Please enter the client config name : " clientName
+        _yellow_println "输入的配置文件 $clientName"wg.conf""
+        if [ -f $clientName"wg.conf" ];then
+            wireguard_choose_file_or_qr  "$clientName"wg.conf
+        else
+            _warning "The client config you entered is not found"
+
+        fi
+        echo
+        echo
+        wireguard_config_file_display
+        ;;
+    0)
+        echo
+        echo
+        wireguard_operation
+    ;;
+    *)
+        _red_println "输入有误，请输入正确的序号！！！"
+        echo
+        echo
+        wireguard_config_file_display
+    ;;
+    esac
+}
+
 
 start_wireguard(){
     [ ${EUID} -ne 0 ] && _red_print "This script must be run as root\n" && exit 1
@@ -510,7 +602,7 @@ start_wireguard(){
     _yellow_println " 1. 安装wireguard服务端                              "
     _purple_println " 2. 安装wireguard客户端                              "
     _purple_println " 3. 生成wireguard客户端文件                           "
-    _purple_println " 4. 查看客户端                                       "
+    _purple_println " 4. 查看配置文件                                      "
     _red_println    " 5. 卸载wireguard                                   "
     _yellow_println " 6. wireguard启停                                   "
     _cyan_println   " 0. 退出脚本                                         "
@@ -539,25 +631,7 @@ start_wireguard(){
         start_wireguard
     ;;
     4)
-        read -p "Please enter the client name : " clientName
-        while  true
-        do
-             if [ -f "/etc/wireguard/$clientName.conf" ];then
-                echo $(cat /etc/wireguard/$clientName.conf) | qrencode -o - -t UTF8
-                break
-            else
-                _warning "The client name you entered is not found"
-                read -p "Please enter the client name : " clientName
-            fi
-        done
-        echo
-        echo
-        echo
-        echo
-        echo
-        echo
-        start_wireguard
-#         qrencode -t ansiutf8 $(cat /etc/wireguard/$clientName.conf)
+        wireguard_config_file_display
     ;;
     5)
         wireguard_uninstall

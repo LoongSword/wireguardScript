@@ -14,6 +14,7 @@ ClientAllowedIPs
 
 ## 启动脚本
 su - <br>
+chmod +x  wireguard.sh <br>
 ./wireguard.sh <br>
 ![image](https://github.com/nightAsShadow/wireguardScript/blob/main/img/wireguardscript.png) <br>
 

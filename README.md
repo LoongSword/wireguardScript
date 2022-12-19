@@ -80,6 +80,10 @@ PostUp/1PostDown启动停止VPN接口之后运行的命令，开启了转发
 
 把配置写入到客户端中
 
+
+把echo ""里面的替换成自己的client配置内容
+
+
 ```
     echo "
     

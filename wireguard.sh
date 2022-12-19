@@ -284,12 +284,11 @@ _create_server_profile(){
     networkCardsId=""
     declare -a networkCards
     for i in `ls /sys/class/net/`;do
-        echo "$i"
         networkCards[${count}]=${i}
         networkCardsId="$count:${i}                   ""$networkCardsId"
         count=$(expr ${count} + 1)
     done
-    _yellow_println "network card number :$networkCardsId"
+    _yellow_println "network card number :       $networkCardsId"
     read -p "Please enter the network card number :  " networkCard
     _info "Selected network card :   "${networkCards[$networkCard]}
     echo "
@@ -507,6 +506,8 @@ wireguard_config_to_file(){
 }
 
 wireguard_choose_file_or_qr(){
+   echo
+   echo
     _purple_println "----------------------------------------------------"
     _yellow_println " 1. 文件形式                                         "
     _purple_println " 2. 二维码形式                                       "
@@ -538,6 +539,8 @@ wireguard_choose_file_or_qr(){
 
 wireguard_config_file_display(){
     cd /etc/wireguard
+    echo
+    echo
     _purple_println "----------------------------------------------------"
     _yellow_println " 1. 查看本机配置文件                                  "
     _purple_println " 2. 查看指定配置文件                                  "
@@ -588,13 +591,9 @@ wireguard_config_file_display(){
 
 
 start_wireguard(){
-    [ ${EUID} -ne 0 ] && _red_print "This script must be run as root\n" && exit 1
-    _blue_backgrounda_println "------------------------------------------------------------"
-    _blue_backgrounda_println " 介绍：wireguard服务端，客户端安装卸载,配置文件生成         "
-    _blue_backgrounda_println " 系统：Debian,ubuntu,Centos,arch                            "
-    _blue_backgrounda_println " 作者：nightAsShadow                                        "
-    _blue_backgrounda_println " 参与者：                                                   "
-    _blue_backgrounda_println "------------------------------------------------------------"
+    echo
+    echo
+    echo
     echo
     echo
     echo
@@ -655,5 +654,12 @@ start_wireguard(){
     esac
 }
 clear
+[ ${EUID} -ne 0 ] && _red_print "This script must be run as root\n" && exit 1
+_blue_backgrounda_println "------------------------------------------------------------"
+_blue_backgrounda_println " 介绍：wireguard服务端，客户端安装卸载,配置文件生成         "
+_blue_backgrounda_println " 系统：Debian,ubuntu,Centos,arch                            "
+_blue_backgrounda_println " 作者：LoongSword                                           "
+_blue_backgrounda_println " 参与者：                                                   "
+_blue_backgrounda_println "------------------------------------------------------------"
 start_wireguard
 

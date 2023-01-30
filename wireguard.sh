@@ -297,7 +297,7 @@ _create_server_profile(){
     echo "
     [Interface]
     PrivateKey = $(cat server_privatekey)
-    Address = $ipv4Address/24,$ipv6Address/32
+    Address = $ipv4Address/24,$ipv6Address/64
     PostUp = iptables -I INPUT -p udp --dport ${UDPListenPort} -j ACCEPT
     PostUp = iptables -I FORWARD -i ${networkCards[$networkCard]} -o $(cat /etc/hostname)wg -j ACCEPT
     PostUp = iptables -I FORWARD -i $(cat /etc/hostname)wg -j ACCEPT
@@ -410,7 +410,7 @@ wireguard_client_config_file(){
     echo "
     [Interface]
     PrivateKey = $(cat $clien_privatekey)
-    Address = $ipv4Address/24,$ipv6Address/32
+    Address = $ipv4Address/32,$ipv6Address/128
     DNS = $DNSIps
     MTU = 1420
 
@@ -425,7 +425,7 @@ wireguard_client_config_file(){
      # 客户端$clientName
      [Peer]
      PublicKey =  $(cat $clien_publickey)
-     AllowedIPs = $ipv4Address,$ipv6Address" | tee -a $(cat /etc/hostname)wg.conf >/dev/null
+     AllowedIPs = $ipv4Address/32,$ipv6Address/128" | tee -a $(cat /etc/hostname)wg.conf >/dev/null
     _success_failed $? "Append wireguard configuration file $(cat /etc/hostname)wg.conf"
 }
 

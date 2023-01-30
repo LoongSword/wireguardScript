@@ -9,6 +9,7 @@ publicAddress=""
 UDPListenPort=12345
 #需要转发的ip段
 ClientAllowedIPs="192.0.2.0/24,2001:db8:1::0/32"
+DNSIps="8.8.8.8, 114.114.114.114"
 
 COM_OS="no"
 wireguardwg=""
@@ -295,8 +296,18 @@ _create_server_profile(){
     [Interface]
     PrivateKey = $(cat server_privatekey)
     Address = $ipv4ServerAddress/24,$ipv6ServerAddress/32
-    PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
-    PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
+    PostUp = iptables -I INPUT -p udp --dport ${UDPListenPort} -j ACCEPT
+    PostUp = iptables -I FORWARD -i ${networkCards[$networkCard]} -o $(cat /etc/hostname)wg -j ACCEPT
+    PostUp = iptables -I FORWARD -i $(cat /etc/hostname)wg -j ACCEPT
+    PostUp = iptables -t nat -A POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
+    PostUp = ip6tables -I FORWARD -i $(cat /etc/hostname)wg -j ACCEPT
+    PostUp = ip6tables -t nat -A POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
+    PostDown = iptables -D INPUT -p udp --dport ${UDPListenPort} -j ACCEPT
+    PostDown = iptables -D FORWARD -i ${networkCards[$networkCard]} -o $(cat /etc/hostname)wg -j ACCEPT
+    PostDown = iptables -D FORWARD -i $(cat /etc/hostname)wg -j ACCEPT
+    PostDown = iptables -t nat -D POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
+    PostDown = ip6tables -D FORWARD -i $(cat /etc/hostname)wg -j ACCEPT
+    PostDown = ip6tables -t nat -D POSTROUTING -o ${networkCards[$networkCard]} -j MASQUERADE
     ListenPort = $UDPListenPort
     MTU = 1420 " | tee  $(cat /etc/hostname)wg.conf >/dev/null
     _success_failed $? "create wireguard configuration file $(cat /etc/hostname)wg.conf"
@@ -387,8 +398,8 @@ wireguard_uninstall(){
 wireguard_client_config_file(){
     _create_folder
     read -p "Please enter the client name : " clientName
-    read -p "Please enter the ipv4, server ipv4 $ipv4ServerAddress : " ipv4Address
-    read -p "Please enter the ipv6, server ipv6 $ipv6ServerAddress : " ipv6Address
+    read -p "Please enter the ipv4, server ipv4 : " -e -i "${ipv4ServerAddress}" ipv4Address
+    read -p "Please enter the ipv6, server ipv6 : "  -e -i "${ipv6ServerAddress}" ipv6Address
     clien_publickey=$clientName"_publickey"
     clien_privatekey=$clientName"_privatekey"
     wg genkey | tee $clien_privatekey | wg pubkey > $clien_publickey
@@ -398,6 +409,7 @@ wireguard_client_config_file(){
     [Interface]
     PrivateKey = $(cat $clien_privatekey)
     Address = $ipv4Address/24,$ipv6Address/32
+    DNS = $DNSIps
     MTU = 1420
 
     [Peer]
@@ -433,12 +445,12 @@ _get_wireguard_name(){
 
 wireguard_operation(){
     _purple_println "----------------------------------------------------"
-    _yellow_println " 1. 启动wireguard                                   "
-    _purple_println " 2. 停止wireguard                                   "
-    _purple_println " 3. 重启wireguard                                   "
-    _purple_println " 4. 重载配置文                                       "
-    _red_println    " 5. 查看状态                                         "
-    _cyan_println   " 0. 返回主菜单                                         "
+    _yellow_println " 1. start wireguard                                   "
+    _purple_println " 2. stop wireguard                                   "
+    _purple_println " 3. restart wireguard                                   "
+    _purple_println " 4. Reload profile                                       "
+    _red_println    " 5. show status                                         "
+    _cyan_println   " 0. Return to main menu                                         "
     _purple_println "----------------------------------------------------"
 
     echo
@@ -485,7 +497,7 @@ wireguard_operation(){
         start_wireguard
     ;;
     *)
-        _red_println "输入有误，请输入正确的序号！！！"
+        _red_println "Incorrect input, please enter correct serial number！！！"
         echo
         echo
         wireguard_operation
@@ -509,13 +521,13 @@ wireguard_choose_file_or_qr(){
    echo
    echo
     _purple_println "----------------------------------------------------"
-    _yellow_println " 1. 文件形式                                         "
-    _purple_println " 2. 二维码形式                                       "
-    _cyan_println   " 0. 返回上一个菜单                                    "
+    _yellow_println " 1. Document form                                         "
+    _purple_println " 2. QR code form                                      "
+    _cyan_println   " 0. Return to the previous menu                                    "
     _purple_println "----------------------------------------------------"
 
     echo
-    read -p "请输入数字:" num
+    read -p "please enter a number:" num
     case "$num" in
     1)
         wireguard_config_to_file $1
@@ -529,7 +541,7 @@ wireguard_choose_file_or_qr(){
         wireguard_config_file_display
     ;;
     *)
-        _red_println "输入有误，请输入正确的序号！！！"
+        _red_println "Incorrect input, please enter correct serial number！！！"
         echo
         echo
         wireguard_choose_file_or_qr
@@ -542,16 +554,16 @@ wireguard_config_file_display(){
     echo
     echo
     _purple_println "----------------------------------------------------"
-    _yellow_println " 1. 查看本机配置文件                                  "
-    _purple_println " 2. 查看指定配置文件                                  "
-    _cyan_println   " 0. 返回上一个菜单                                    "
+    _yellow_println " 1. View native profile                                 "
+    _purple_println " 2. View the specified profile                               "
+    _cyan_println   " 0. Return to the previous menu                             "
     _purple_println "----------------------------------------------------"
 
     echo
-    read -p "请输入数字:" num
+    read -p "please enter a number:" num
     case "$num" in
     1)
-        _yellow_println "本机配置文件 $(cat /etc/hostname)wg.conf"
+        _yellow_println "Native profile $(cat /etc/hostname)wg.conf"
         if [ -f "$(cat /etc/hostname)wg.conf" ];then
             wireguard_choose_file_or_qr "$(cat /etc/hostname)wg.conf"
         else
@@ -564,7 +576,7 @@ wireguard_config_file_display(){
         ;;
     2)
         read -p "Please enter the client config name : " clientName
-        _yellow_println "输入的配置文件 $clientName"wg.conf""
+        _yellow_println "Profile name entered $clientName"wg.conf""
         if [ -f $clientName"wg.conf" ];then
             wireguard_choose_file_or_qr  "$clientName"wg.conf
         else
@@ -581,7 +593,7 @@ wireguard_config_file_display(){
         wireguard_operation
     ;;
     *)
-        _red_println "输入有误，请输入正确的序号！！！"
+        _red_println "Incorrect input, please enter correct serial number！！！"
         echo
         echo
         wireguard_config_file_display
@@ -598,13 +610,13 @@ start_wireguard(){
     echo
     echo
     _purple_println "----------------------------------------------------"
-    _yellow_println " 1. 安装wireguard服务端                              "
-    _purple_println " 2. 安装wireguard客户端                              "
-    _purple_println " 3. 生成wireguard客户端文件                           "
-    _purple_println " 4. 查看配置文件                                      "
-    _red_println    " 5. 卸载wireguard                                   "
-    _yellow_println " 6. wireguard启停                                   "
-    _cyan_println   " 0. 退出脚本                                         "
+    _yellow_println " 1. Install wireguard Server                            "
+    _purple_println " 2. Install wireguard Client                             "
+    _purple_println " 3. Create wireguard Client File                          "
+    _purple_println " 4. show configuration file                                 "
+    _red_println   " 5. Uninstall wireguard                                   "
+    _yellow_println " 6. wireguard start and stop                                "
+    _cyan_println   " 0. sign out                                         "
     _purple_println "----------------------------------------------------"
 
 

@@ -292,10 +292,12 @@ _create_server_profile(){
     _yellow_println "network card number :       $networkCardsId"
     read -p "Please enter the network card number :  " networkCard
     _info "Selected network card :   "${networkCards[$networkCard]}
+    read -p "Please enter the ipv4, server ipv4 : " -e -i "${ipv4ServerAddress}" ipv4Address
+    read -p "Please enter the ipv6, server ipv6 : "  -e -i "${ipv6ServerAddress}" ipv6Address
     echo "
     [Interface]
     PrivateKey = $(cat server_privatekey)
-    Address = $ipv4ServerAddress/24,$ipv6ServerAddress/32
+    Address = $ipv4Address/24,$ipv6Address/32
     PostUp = iptables -I INPUT -p udp --dport ${UDPListenPort} -j ACCEPT
     PostUp = iptables -I FORWARD -i ${networkCards[$networkCard]} -o $(cat /etc/hostname)wg -j ACCEPT
     PostUp = iptables -I FORWARD -i $(cat /etc/hostname)wg -j ACCEPT

@@ -258,13 +258,13 @@ _ipForward_server(){
         _info "ipv4 forwad is Already exists"
     fi
     #ipv6
-    ipv6=$(cat /etc/sysctl.conf | awk '/net.ipv6.conf.all.forwarding/')
-    if [[ -z $ipv6 ]]; then
-        echo "net.ipv6.conf.all.forwarding = 1" >> /etc/sysctl.conf
-        _success_failed $? "ipv6 forwad"
-    else
-        _info "ipv6 forwad is Already exists"
-    fi
+    #ipv6=$(cat /etc/sysctl.conf | awk '/net.ipv6.conf.all.forwarding/')
+    #if [[ -z $ipv6 ]]; then
+    #    echo "net.ipv6.conf.all.forwarding = 1" >> /etc/sysctl.conf
+    #    _success_failed $? "ipv6 forwad"
+    #else
+    #    _info "ipv6 forwad is Already exists"
+    #fi
     sysctl -p
 }
 _create_folder(){
